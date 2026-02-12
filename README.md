@@ -22,14 +22,7 @@ https://www.kaggle.com/datasets/msafi04/predict-mortality-of-icu-patients-physio
 Download and extract the dataset. After extraction, place the files in the following structure:
 
 ```
-project-root/
-└── archive/
-├── Outcomes-a.txt
-└── set-a/
-└── set-a/
-├── 132539.txt
-├── 132540.txt
-├── ...
+<pre> ``` project-root/ └── archive/ ├── Outcomes-a.txt └── set-a/ └── set-a/ ├── 132539.txt ├── 132540.txt └── ... ``` </pre>
 ```
 
 The notebook assumes this exact folder structure. The dataset is not included in this repository.
