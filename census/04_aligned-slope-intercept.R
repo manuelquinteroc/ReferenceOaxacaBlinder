@@ -4,7 +4,6 @@
 
 
 # Libraries ---------------------------------------------------------------
-renv::load()
 library(here)
 library(fst)
 library(readr)

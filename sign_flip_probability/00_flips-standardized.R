@@ -1,5 +1,5 @@
 # Libraries ---------------------------------------------------------------
-renv::load()
+renv::activate()
 library(here)
 library(tidyr)
 library(dplyr)

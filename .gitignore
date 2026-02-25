@@ -9,6 +9,7 @@ renv/python/
 # temp files
 census/temp
 census/out
+census/raw
 sign_flip_probability/out
 **/.Rhistory
 

@@ -3,7 +3,6 @@ set.seed(1)
 
 
 # Libraries ---------------------------------------------------------------
-renv::load()
 library(here)
 library(tidyr)
 library(dplyr)
