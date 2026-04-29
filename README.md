@@ -7,7 +7,13 @@ This repository reproduces all empirical results, tables, and figures in the pap
 
 ## Real-data example (ICU application)
 
-The notebook `Real-data example/icu_analysis.ipynb` reproduces the ICU application in Section 3 and Appendix C.1 of the paper (Tables 1 and 4; Figures 1 and 5).
+The notebooks in `Real-data example/` reproduce the ICU application in Section 3 and Appendix C.1 of the paper (Table 1 and Appendix Tables 3, 4, 5; Figure 1 (Left) and Appendix Figure 2). The pipeline runs in three steps:
+
+1. `construct_ICU_data.ipynb` — builds the clean analysis dataset (`ICU_clean.csv`) from the raw PhysioNet files.
+2. `icu_139_final_models.ipynb` — runs linear, logistic, neural net, and XGBoost on 139 clinical subsets; produces the non-TabPFN rows of Table 1 and Appendix Tables 3, 4, 5, plus Figure 1 (Left) and Appendix Figure 2.
+3. `icu_139_tabpfn_local.ipynb` — runs TabPFN locally (CPU or GPU); completes the TabPFN row of Table 1 and Appendix Tables 3, 4, 5.
+
+Install Python dependencies with `pip install -r "Real-data example/requirements.txt"`.
 
 ### Data
 
@@ -21,7 +27,10 @@ Real-data example/archive/
 so that the final structure is:
 ```
 Real-data example/
-├── icu_analysis.ipynb
+├── construct_ICU_data.ipynb
+├── icu_139_final_models.ipynb
+├── icu_139_tabpfn_local.ipynb
+├── requirements.txt
 ├── archive/
 │   ├── Outcomes-a.txt
 │   └── set-a/
@@ -36,7 +45,7 @@ The dataset is not included in this repository.
 
 ## Census Data Example
 
-The R scripts in `census` produce the U.S. labor force analyses referenced in Section 5.3, 5.4, and C.2, including Table 8.
+The R scripts in `census` produce the U.S. labor force analyses referenced in Section 3 and Appendix B.2, including Tables 7 and 8.
 
 1. From the project root, run `R --no-save --no-restore`. This will automatically install the `renv` package, which manages the other packages used in this project. From within this R session execute the command `renv::restore()` and type `Y` when prompted to install the remaining required packages.
 
@@ -57,10 +66,10 @@ census/
 
 ## Sign Flip Probabilities
 
-The R scripts in `prob_of_signflip` produce Figures 3 and 4. The file `prob_of_signflip/Makefile` configures these scripts. 
+The R scripts in `prob_of_signflip` produce Figure 1 (Right) and Appendix Figure 4. The file `prob_of_signflip/Makefile` configures these scripts. 
 
 1. If you have not done so for the census data example, run `R --no-save --no-restore` from the project root. This will automatically install the `renv` package, which manages the other packages used in this project. From within this R session execute the command `renv::restore()` and type `Y` when prompted to install the remaining required packages.
 
 2. Run the analysis by navigating to `prob_of_signflip` from the command line and executing the command `make`. The analysis is configured by `prob_of_signflip/Makefile` and will produce:
-* `prob_of_signflip/out/standardized.pdf`: Figure 3
-* `prob_of_signflip/out/raw.pdf`: Figure 4
+* `prob_of_signflip/out/standardized.pdf`: Figure 1 (Right)
+* `prob_of_signflip/out/raw.pdf`: Appendix Figure 4

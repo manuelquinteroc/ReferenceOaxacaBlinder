@@ -1,7 +1,7 @@
 """
 simulate_bmi_sbp.py
 
-Replication of Section 4: Simulated Healthcare Example from:
+Replication of Appendix Section C: Simulated Healthcare Example from:
 
 “Do covariates explain why these groups differ? The choice of reference group
 can reverse conclusions in the Oaxaca–Blinder decomposition.”
