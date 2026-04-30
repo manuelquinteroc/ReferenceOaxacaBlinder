@@ -19,26 +19,28 @@ boots = read_fst(here('census', 'temp', 'ob_boots.fst')) |> as_tibble()
 
 
 # Standard Errors ---------------------------------------------------------
-boot_se = boots |> 
+boot_se = boots |>
   pivot_longer(cols = c(starts_with('delta'),
                         ends_with('_0'),
                         ends_with('_1')),
                names_to  = 'stat_name',
-               values_to = 'stat_value_boot') |> 
-  group_by(subset_name, subset_value, pop_name, x_name, y_name, 
-           stat_name) |> 
-  summarize(stat_se = sd(stat_value_boot),
+               values_to = 'stat_value_boot') |>
+  group_by(subset_name, subset_value, pop_name, x_name, y_name,
+           stat_name) |>
+  summarize(stat_se = sd(stat_value_boot),  # bootstrap SD as SE estimate
             .groups = 'drop')
 
 
 # Append SEs  -------------------------------------------------------------
-flips = fits |> 
+flips = fits |>
   pivot_longer(cols = c(starts_with('delta'),
                         ends_with('_0'),
                         ends_with('_1')),
                names_to  = 'stat_name',
-               values_to = 'stat_value_obs') |> 
-  inner_join(boot_se) |> 
+               values_to = 'stat_value_obs') |>
+  inner_join(boot_se) |>
+  # Two-sided Wald test: treat bootstrap distribution as approximately normal
+  # centered at the observed estimate; p = P(|Z| > |obs/se|) under H0: stat = 0
   mutate(p_val = 2 * pnorm(-abs(stat_value_obs), sd = stat_se))
 
 

@@ -13,7 +13,8 @@ library(purrr)
 
 # Load Data ---------------------------------------------------------------
 load_acs = function() {
-  
+
+  # Read only the columns needed; INDP is integer-coded, NAICSP is the raw NAICS string
   acs_cols = cols_only(ST    = 'i',  # State
                        AGEP  = 'i',  # Age
                        ESR   = 'i',  # Employment status
@@ -44,26 +45,29 @@ load_acs = function() {
 
 acs_raw = load_acs()
 
-acs = acs_raw |> 
-  tidylog::filter(between(agep, 25, 65),
-                  wkhp >= 35,
-                  wkw == 1, # 50-52 weeks per year
-                  esr == 1, # Civilian employed, at work
-                  pernp >= 12687.50,
-                  pincp >= 12687.50) |> 
+acs = acs_raw |>
+  # Sample restrictions from Bach et al. (2024)
+  tidylog::filter(between(agep, 25, 65),    # prime working age
+                  wkhp >= 35,               # full-time (≥35 hrs/week)
+                  wkw == 1,                 # full-year (50–52 weeks)
+                  esr == 1,                 # civilian employed, at work (excludes self-employed & unemployed)
+                  pernp >= 12687.50,        # ≥ full-time federal minimum wage ($7.25 × 35 hrs × 50 wks)
+                  pincp >= 12687.50) |>     # same floor on total personal income
   transmute(st,
-            indp_2     = substr(indp, 1, 2),
-            naics_2    = substr(naicsp, 1, 2),
+            indp_2     = substr(indp, 1, 2),    # 2-digit INDP code used as subset identifier
+            naics_2    = substr(naicsp, 1, 2),  # 2-digit NAICS used as subset identifier
             naics_3    = substr(naicsp, 1, 3),
-            pincp      = log(pincp),
+            pincp      = log(pincp),            # log income as continuous outcome
             sex_female = sex == 2,
             hicov      = hicov == 1,
             immigrant  = nativity == 2,
             mar        = mar == 1,
-            educ_bach  = schl >= 21,
+            educ_bach  = schl >= 21,            # bachelor's degree or higher
+            # NA for non-Black/non-White respondents; those rows are still used for
+            # decompositions where race_bw is not the population variable
             race_bw = case_when(rac1p == 1 ~ 0,
                                 rac1p == 2 ~ 1,
-                                TRUE ~ NA_real_)) |> 
+                                TRUE ~ NA_real_)) |>
   mutate(across(where(is.logical), as.numeric))
 
 
