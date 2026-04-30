@@ -45,7 +45,7 @@ The dataset is not included in this repository.
 
 ## Census Data Example
 
-The R scripts in `census` produce the U.S. labor force analyses referenced in Section 3 and Appendix B.2, including Tables 7 and 8.
+The R scripts in `census` produce the U.S. labor force analyses referenced in Section 3 and Appendix B.2, including Tables 8 and 9.
 
 1. From the project root, run `R --no-save --no-restore`. This will automatically install the `renv` package, which manages the other packages used in this project. From within this R session execute the command `renv::restore()` and type `Y` when prompted to install the remaining required packages.
 
@@ -61,8 +61,8 @@ census/
 ```
 
 4. Run the analysis by navigating to `census` from the command line and executing the command `make`. The analysis is configured by `census/Makefile` and will produce:
-* `census/out/flip_signif.csv`: summary statistics for section 5.3 and C.2 (Table 8).
-* `census/out/aligned_stats.csv`: summary statistics for checking assumption 5.1 in the U.S. labor force example, as quoted in section 5.4.
+* `census/out/flip_counts.csv`: statistics for Tables 8 and 9.
+* `census/out/aligned_stats.csv`: summary statistics for checking assumption 4.1 in the U.S. labor force example, as quoted in section 4.3.
 
 ## Sign Flip Probabilities
 

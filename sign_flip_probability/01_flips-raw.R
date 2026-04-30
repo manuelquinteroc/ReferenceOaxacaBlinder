@@ -85,7 +85,8 @@ gg = ggplot(gg_tb,
   labs(x = "Dimensionality of Covariates (d)",
        y = "Percentage of Parameter Space\nWith Sign Flip",
        color = "Cube Length (2M)") +
-  theme_bw(base_size = 24) +
+  theme_bw(base_size = 20,
+           base_family = "DejaVu Sans") +
   theme(axis.text       = element_text(color = 'black'),
         strip.background = element_rect(color = 'black', fill = NA),
         legend.position = "inside",
@@ -99,4 +100,5 @@ gg = ggplot(gg_tb,
 # save
 ggsave(here('sign_flip_probability', 'out', 'raw.pdf'),
        gg, 
-       width = 9, height = 6.5, units = "in")
+       device = cairo_pdf,
+       width = 8, height = 6, units = "in")
