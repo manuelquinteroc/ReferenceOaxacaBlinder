@@ -1,0 +1,11 @@
+# Python census pipeline (census/py/) — shares the oaxaca_engine with Real-data example.
+# Versions aligned with ../../Real-data example/requirements.txt.
+numpy==1.26.*
+pandas==2.2.*
+scipy==1.13.*
+scikit-learn==1.5.*
+statsmodels==0.14.*
+xgboost==2.1.*
+joblib==1.4.*
+pyarrow>=14
+pyprojroot>=0.3
