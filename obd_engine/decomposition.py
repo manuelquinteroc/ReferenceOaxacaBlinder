@@ -51,14 +51,19 @@ def decompose_mean(prepped: PreparedData, algo_name: str) -> dict:
     X0, y0 = X.iloc[idx0], y[idx0]
     X1, y1 = X.iloc[idx1], y[idx1]
 
-    fit_0 = builder().fit(X0, y0)
-    fit_1 = builder().fit(X1, y1)
+    try:
+        fit_0 = builder().fit(X0, y0)
+        fit_1 = builder().fit(X1, y1)
 
-    # mu(a, b): group-b model evaluated on group-a covariates.
-    mu_00 = predict_mean(fit_0, X0)
-    mu_10 = predict_mean(fit_0, X1)
-    mu_01 = predict_mean(fit_1, X0)
-    mu_11 = predict_mean(fit_1, X1)
+        # mu(a, b): group-b model evaluated on group-a covariates.
+        mu_00 = predict_mean(fit_0, X0)
+        mu_10 = predict_mean(fit_0, X1)
+        mu_01 = predict_mean(fit_1, X0)
+        mu_11 = predict_mean(fit_1, X1)
+    except ValueError:
+        # e.g. a classifier handed a single-class group it cannot fit; the cell
+        # is undecomposable. Keep the group sizes so the caller can still filter.
+        return {**_NAN_ROW, "n_1": int(len(idx1)), "n_0": int(len(idx0))}
 
     return {
         "delta_y": float(np.mean(y1) - np.mean(y0)),

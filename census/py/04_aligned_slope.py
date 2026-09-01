@@ -21,7 +21,7 @@ from joblib import Parallel, delayed
 from pyprojroot.here import here
 
 sys.path.insert(0, str(here()))
-from oaxaca_engine import build_ols, prepare_features  # noqa: E402
+from obd_engine import build_ols, prepare_features  # noqa: E402
 
 N_JOBS = 8
 

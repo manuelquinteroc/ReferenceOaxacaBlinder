@@ -16,11 +16,12 @@ import numpy as np
 import pandas as pd
 from pyprojroot.here import here
 
-sys.path.insert(0, str(here()))  # make oaxaca_engine importable (unused here, kept uniform)
+sys.path.insert(0, str(here()))  # make obd_engine importable (unused here, kept uniform)
 
-# Columns to read (R cols_only, 00_load-acs-16.R:18-33). All integer except NAICSP.
+# Columns to read. All integer except NAICSP.
 INT_COLS = ["ST", "AGEP", "ESR", "WKHP", "WKW", "PERNP", "PINCP",
-            "NATIVITY", "HICOV", "SEX", "RAC1P", "SCHL", "MAR", "INDP"]
+            "NATIVITY", "HICOV", "SEX", "RAC1P", "SCHL", "MAR", "INDP",
+            "DIS", "COW", "MIL"]
 STR_COLS = ["NAICSP"]
 USECOLS = INT_COLS + STR_COLS
 
@@ -58,10 +59,14 @@ def main() -> None:
     )
     acs = acs_raw[mask].copy()
 
-    # Integer-coded industry; R coerces to character before substr. Cast via int to
-    # avoid "170.0"-style float strings.
+    # Cast industry code via int to avoid "170.0"-style float strings.
     indp_str = acs["indp"].astype("int64").astype(str)
     naicsp_str = acs["naicsp"].astype(str)
+
+    # COW: class of worker. NA = not in the labor force in the past 5 years; keep
+    # those rows and give the missing value its own integer code (0) rather than
+    # dropping them.
+    cow = acs["cow"].fillna(0)
 
     out = pd.DataFrame({
         "st": acs["st"].astype("int64"),
@@ -80,12 +85,19 @@ def main() -> None:
             [0.0, 1.0],
             default=np.nan,
         ),
+        "disability": (acs["dis"] == 1).astype(float),
+        "self_employed": cow.isin([6, 7]).astype(float),
+        "govt_employee": cow.isin([3, 4, 5]).astype(float),
+        # MIL: 1=active duty, 2=past active duty, 3=training only, 4=never served.
+        "veteran": acs["mil"].isin([1, 2, 3]).astype(float),
     })
 
     out_path = here() / "census" / "temp" / "acs16_workforce.parquet"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out.to_parquet(out_path, index=False)
     print(f"Saved {len(out):,} rows -> {out_path}")
+    
+    return None
 
 
 if __name__ == "__main__":

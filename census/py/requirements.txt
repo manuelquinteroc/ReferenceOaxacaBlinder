@@ -1,4 +1,4 @@
-# Python census pipeline (census/py/) — shares the oaxaca_engine with Real-data example.
+# Python census pipeline (census/py/) — shares the obd_engine with Real-data example.
 # Versions aligned with ../../Real-data example/requirements.txt.
 numpy==1.26.*
 pandas==2.2.*

@@ -1,7 +1,5 @@
 """02 - Bootstrap only the sign-flip cases that pass the size/magnitude filter.
 
-Python port of ``census/02_bootstrap-nonlinear-decomposition.R``.
-
 Inputs : census/temp/acs16_workforce.parquet
          census/temp/nonlinear_fits.parquet
 Outputs: census/temp/nonlinear_boots/<i>.parquet   (resumable chunks)
@@ -19,10 +17,10 @@ import pandas as pd
 from pyprojroot.here import here
 
 sys.path.insert(0, str(here()))
-from oaxaca_engine import bootstrap_decomposition  # noqa: E402
+from obd_engine import bootstrap_decomposition  # noqa: E402
 
-B = 1000          # bootstrap replicates (R n_boot = 1000)
-INNER_JOBS = 6    # R plan(multicore, workers = min(6, availableCores()))
+B = 1000
+INNER_JOBS = 6
 KEYS = ["subset_name", "subset_value", "pop_name", "y_name", "algo_name"]
 
 
@@ -34,7 +32,7 @@ def select_flip_cases(fits: pd.DataFrame) -> pd.DataFrame:
         (np.sign(sized["explained_0"] * sized["explained_1"]) != 1)
         | (np.sign(sized["unexplained_0"] * sized["unexplained_1"]) != 1)
     ]
-    # Sort ols/glm first for throughput (cosmetic; R lines 47-48).
+    
     design = flips[KEYS].drop_duplicates().copy()
     design["_o"] = (design["algo_name"] != "ols").astype(int) \
         + (design["algo_name"] != "glm").astype(int)
@@ -52,7 +50,7 @@ def main() -> None:
     boots_dir = here() / "census" / "temp" / "nonlinear_boots"
     boots_dir.mkdir(parents=True, exist_ok=True)
 
-    # Resume: skip cells whose chunk file already exists (R counts existing files).
+    # Resume: skip cells whose chunk file already exists.
     for i, cell in enumerate(design.itertuples(index=False), start=1):
         chunk_path = boots_dir / f"{i}.parquet"
         if chunk_path.exists():

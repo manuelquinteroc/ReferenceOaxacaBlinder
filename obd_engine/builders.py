@@ -75,9 +75,36 @@ def build_ols() -> OLSModel:
 
 # --- classification builders (copied from the ICU notebook) -----------------------
 
-def build_logistic() -> Pipeline:
-    return Pipeline([("scaler", StandardScaler()),
-                     ("clf", LogisticRegression(max_iter=2000, random_state=0))])
+class LogisticModel:
+    """LogisticRegression that degrades gracefully on a single-class group.
+
+    R's ``glm(..., family = binomial)`` still returns a fit (with a warning) when the
+    outcome is constant within a group, predicting that constant everywhere. sklearn's
+    solver raises instead, so mirror R: if only one class is present, predict its value.
+    """
+
+    def __init__(self):
+        self.pipe_ = Pipeline([("scaler", StandardScaler()),
+                               ("clf", LogisticRegression(max_iter=2000, random_state=0))])
+        self.const_ = None
+
+    def fit(self, X, y):
+        y = np.asarray(y, dtype=float)
+        if np.unique(y).size < 2:
+            self.const_ = float(y[0]) if y.size else np.nan
+        else:
+            self.pipe_.fit(X, y)
+        return self
+
+    def predict_proba(self, X):
+        if self.const_ is not None:
+            p = np.full(len(X), self.const_, dtype=float)
+            return np.column_stack([1.0 - p, p])
+        return self.pipe_.predict_proba(X)
+
+
+def build_logistic() -> LogisticModel:
+    return LogisticModel()
 
 
 def build_nn_clf() -> Pipeline:

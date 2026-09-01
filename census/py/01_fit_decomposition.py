@@ -19,20 +19,16 @@ from joblib import Parallel, delayed
 from pyprojroot.here import here
 
 sys.path.insert(0, str(here()))
-from oaxaca_engine import decompose_from_data  # noqa: E402
+from obd_engine import decompose_from_data
 
-# Design grid (R 01_fit-nonlinear-decomposition.R:34-52).
 SUBSET_COLS = ["st", "naics_2"]
 POP_NAMES = ["sex_female", "race_bw", "immigrant"]
-# Algorithms per outcome. R fits ols/gbt for pincp and ols/glm/gbt for hicov; we add the
-# neural net (``net``). ``glm`` (logistic) is binary-only.
 ALGOS_BY_OUTCOME = {
-    "pincp": ["ols", "gbt", "net"],
-    "hicov": ["ols", "glm", "gbt", "net"],
+    "pincp": ["ols", "gbt"],
+    "hicov": ["ols", "glm"],
 }
 
-N_JOBS = 8  # R uses plan(multicore, workers = 8)
-
+N_JOBS = 8
 
 def build_subsets(acs: pd.DataFrame) -> pd.DataFrame:
     """Distinct (subset_name, subset_value) pairs over st and naics_2, as strings."""
@@ -63,7 +59,7 @@ def fit_subset(subset_name: str, subset_value: str, sub: pd.DataFrame) -> list[d
 
 def main() -> None:
     acs = pd.read_parquet(here() / "census" / "temp" / "acs16_workforce.parquet")
-    # Drop NAICS3: too many factor levels, slows ML fits (R line 28).
+    # Drop NAICS3 (too many factor levels)
     acs = acs.drop(columns=["naics_3"])
 
     subsets = build_subsets(acs)

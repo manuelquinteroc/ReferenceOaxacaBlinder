@@ -1,7 +1,5 @@
 """03 - Bootstrap SEs, normal-approx p-values, and the flip-count table.
 
-Python port of ``census/03_count-flips.R``.
-
 Inputs : census/temp/nonlinear_fits.parquet
          census/temp/nonlinear_boots.parquet
 Output : census/out_py/flip_counts.csv
@@ -18,7 +16,7 @@ import pandas as pd
 from pyprojroot.here import here
 
 sys.path.insert(0, str(here()))
-from oaxaca_engine import pval  # noqa: E402
+from obd_engine import pval  # noqa: E402
 
 GROUP_KEYS = ["subset_name", "subset_value", "pop_name", "algo_name", "y_name"]
 STAT_COLS = ["explained_0", "explained_1", "unexplained_0", "unexplained_1"]
