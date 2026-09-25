@@ -83,21 +83,23 @@ gg = ggplot(gg_tb,
   labs(x     = "Dimensionality of Covariates (d)",
        y     = "Percentage of\nParameter Space",
        color = "Sign Flip in...") +
-  theme_bw(base_size = 20,
+  theme_bw(base_size = 24,
            base_family = "DejaVu Sans") +
-  theme(axis.text       = element_text(color = 'black'),
+  theme(axis.text       = element_text(color = 'black', size = 24),
+        axis.title      = element_text(size = 22),
         legend.position = "inside",
-        legend.position.inside = c(0.68, 0.22),
-        legend.title = element_text(size = 18),
-        legend.text = element_text(size = 17),
-        legend.key.size = unit(0.8, "lines"),
+        legend.position.inside = c(0.60, 0.22),
+        legend.title = element_text(size = 21),
+        legend.text = element_text(size = 18),
+        legend.key.size = unit(0.9, "lines"),
+        legend.margin = margin(4, 6, 4, 6),
         legend.background = element_rect(colour = "black")) +
   scale_color_manual(values = c('Explained Component'   = '#785EF0',
                                 'Unexplained Component' = '#FE6100')) +
   scale_y_continuous(labels = scales::percent) +
-  geom_line(linewidth = 1.6)
+  geom_line(linewidth = 1.1)
 
 ggsave(here('sign_flip_probability', 'out', 'standardized.pdf'),
        gg, 
        device = cairo_pdf,
-       width = 6, height = 4.5, units = "in")   # Figure 1 (right): 6 x 4.5 in
+       width = 6, height = 5, units = "in")   # Figure 1 (right): 6 x 5 in
