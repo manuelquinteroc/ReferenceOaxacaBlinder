@@ -7,19 +7,20 @@ This repository reproduces all empirical results, tables, and figures in the pap
 
 ## Real-data example (ICU application)
 
-The notebooks in `Real-data example/` reproduce the ICU application in Section 3 and Appendix C.1 of the paper (Table 1 and Appendix Tables 3, 4, 5; Figure 1 (Left) and Appendix Figure 2). The pipeline runs in three steps:
+The notebooks in `Real-data example/` reproduce the ICU application in Section 3 and Appendix B.1 of the paper (Table 1 and Appendix Tables 3, 4, 5; Figure 1 (Left) and Appendix Figure 2). The pipeline runs in three steps:
 
 1. `construct_ICU_data.ipynb` — builds the clean analysis dataset (`ICU_clean.csv`) from the raw PhysioNet files.
-2. `icu_139_final_models.ipynb` — runs linear, logistic, neural net, and XGBoost on 139 clinical subsets; produces the non-TabPFN rows of Table 1 and Appendix Tables 3, 4, 5, plus Figure 1 (Left) and Appendix Figure 2.
+2. `icu_139_final_models.ipynb` — runs linear, logistic, neural net, and XGBoost on the 139 data subsets; produces the non-TabPFN rows of Table 1 and Appendix Tables 3, 4, 5, plus Figure 1 (Left) and Appendix Figure 2.
 3. `icu_139_tabpfn_local.ipynb` — runs TabPFN locally (CPU or GPU); completes the TabPFN row of Table 1 and Appendix Tables 3, 4, 5.
 
 Install Python dependencies with `pip install -r "Real-data example/requirements.txt"`.
 
 **Model complexity (supplementary).** `icu_139_complexity_sweep.ipynb` re-runs the Table 1
-decomposition on the same 139 subsets while varying one hyperparameter at a time (XGBoost
+decomposition on the same 139 data subsets while varying one hyperparameter at a time (XGBoost
 depth 1–10 and number of trees 10–10,000; neural-net width at depth 3 and depth at width 32,
-three seeds each), everything else at the paper's values. Fits are cached per setting in
-`complexity_sweep/`; figures go to `Figures/complexity_{xgb_depth,xgb_trees,nn_width,nn_depth}.pdf`.
+three seeds each), everything else at the paper's values; this is the ICU column of Appendix B.3 and Figure 3.
+Fits are cached per setting in `complexity_sweep/`; figures go to
+`Figures/complexity_{xgb_depth,xgb_trees,nn_width,nn_depth}.pdf` (and `*_noylabel.pdf` variants used in Figure 3).
 
 ### Data
 
@@ -68,7 +69,7 @@ census/
 
 4. Run the analysis by navigating to `census` from the command line and executing the command `make`. The analysis is configured by `census/Makefile` and will produce:
 * `census/out/flip_counts.csv`: statistics for Tables 8 and 9.
-* `census/out/aligned_stats.csv`: summary statistics for checking assumption 4.1 in the U.S. labor force example, as quoted in section 4.3.
+* `census/out/aligned_stats.csv`: summary statistics on the alignment of the group-specific slopes and intercepts in the U.S. labor force example.
 
 ## Census Data Example — Python pipeline
 
@@ -92,6 +93,8 @@ python3 census/py/04_aligned_slope.py       # -> out_py/aligned_stats.csv
 TabPFN notebook: config cell at the top, three resumable phases (point estimates, B = 1000
 bootstrap of the flip cells, flip counts), same engine as the CPU models. `census/py/data/`
 ships the analysis table so the node does not need the 3 GB raw download.
+`census/py/run_tabpfn_cluster.sh` and `census/py/run_net_bootstrap_cluster.sh` are the batch
+equivalents (TabPFN, and the B = 1000 bootstrap of the neural network) for a cluster.
 
 Models: `ols`, `glm` (sklearn logistic with its default L2 penalty — the ICU notebook's model),
 `glm_r` (unpenalized logistic, the R `glm` the paper's census tables used), `gbt` (XGBoost),
@@ -123,7 +126,7 @@ OBD_OUT_SUFFIX=_test OBD_B=20 python3 census/py/01_fit_decomposition.py \
 
 **Fidelity to the R pipeline.** Two things matter for reproducing Tables 8–9 with this port:
 
-1. *Rank deficiency.* Subgroups are small (n ≈ 50–200) while the design has ~150 columns, so
+1. *Rank deficiency.* Data subsets are small (n ≈ 50–200) while the design has ~150 columns, so
    exact collinearity is routine. R's `lm.fit`/`glm.fit` alias such columns (drop them);
    a pseudo-inverse spreads the weight across them instead. Both give the same in-sample fit
    but different predictions on the *other* group — which is what the decomposition uses.
@@ -135,9 +138,11 @@ OBD_OUT_SUFFIX=_test OBD_B=20 python3 census/py/01_fit_decomposition.py \
    enabled with `OBD_EXTRA_COVARIATES=1`.
 
 **Model complexity (supplementary).** `census/py/05_complexity_sweep.py` runs the same four
-sweeps as the ICU notebook on the 217 + 183 cells of Tables 8–9 (neural-net widths up to 256;
+sweeps as the ICU notebook on the 217 + 183 data subsets of Tables 8–9 (neural-net widths up to 256;
 resumable, cached per setting in `census/complexity_sweep/`), and
-`census/py/census_complexity_sweep.ipynb` draws the figures into `census/out_py/figures/`.
+`census/py/census_complexity_sweep.ipynb` draws the figures into `census/out_py/figures/`
+(the Census columns of Appendix B.3 and Figure 3). `census/py/xx_montage_icu_vs_census.py`
+places the ICU and Census panels side by side.
 
 `flip_counts*.csv` carries an extra `n_with_se` column: the number of flip cells that have
 bootstrap standard errors. When it is below `is_flip`, the `reject_*` counts for that row are
@@ -145,10 +150,10 @@ lower bounds (the paper reports such rows with "-").
 
 ## Sign Flip Probabilities
 
-The R scripts in `prob_of_signflip` produce Figure 1 (Right) and Appendix Figure 4. The file `prob_of_signflip/Makefile` configures these scripts. 
+The R scripts in `sign_flip_probability` produce Figure 1 (Right) and Appendix Figure 5. The file `sign_flip_probability/Makefile` configures these scripts. 
 
 1. If you have not done so for the census data example, run `R --no-save --no-restore` from the project root. This will automatically install the `renv` package, which manages the other packages used in this project. From within this R session execute the command `renv::restore()` and type `Y` when prompted to install the remaining required packages.
 
-2. Run the analysis by navigating to `prob_of_signflip` from the command line and executing the command `make`. The analysis is configured by `prob_of_signflip/Makefile` and will produce:
-* `prob_of_signflip/out/standardized.pdf`: Figure 1 (Right)
-* `prob_of_signflip/out/raw.pdf`: Appendix Figure 4
+2. Run the analysis by navigating to `sign_flip_probability` from the command line and executing the command `make`. The analysis is configured by `sign_flip_probability/Makefile` and will produce:
+* `sign_flip_probability/out/standardized.pdf`: Figure 1 (Right)
+* `sign_flip_probability/out/raw.pdf`: Appendix Figure 5
