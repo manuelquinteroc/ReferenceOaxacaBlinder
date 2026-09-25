@@ -10,6 +10,8 @@ Run from the repo root:  python census/py/02_bootstrap_flips.py
 
 from __future__ import annotations
 
+import os
+import re
 import sys
 
 import numpy as np
@@ -19,9 +21,21 @@ from pyprojroot.here import here
 sys.path.insert(0, str(here()))
 from obd_engine import bootstrap_decomposition  # noqa: E402
 
-B = 1000
-INNER_JOBS = 6
+# Overridable from the environment (see 01_fit_decomposition.py), e.g. a quick test:
+#   OBD_B=50 OBD_OUT_SUFFIX=_test python census/py/02_bootstrap_flips.py
+# or bootstrapping only the cheap models first (the run is resumable per cell):
+#   OBD_BOOT_ALGOS=ols,glm python census/py/02_bootstrap_flips.py
+B = int(os.environ.get("OBD_B", 1000))
+INNER_JOBS = int(os.environ.get("OBD_INNER_JOBS", 6))
+BOOT_ALGOS = os.environ.get("OBD_BOOT_ALGOS")           # comma list; None = all algos
+OUT_SUFFIX = os.environ.get("OBD_OUT_SUFFIX", "")
 KEYS = ["subset_name", "subset_value", "pop_name", "y_name", "algo_name"]
+
+
+def cell_slug(cell) -> str:
+    """Stable file name for a design cell, so resuming works across algo filters."""
+    raw = "__".join(str(getattr(cell, k)) for k in KEYS)
+    return re.sub(r"[^A-Za-z0-9_.=-]+", "-", raw)
 
 
 def select_flip_cases(fits: pd.DataFrame) -> pd.DataFrame:
@@ -34,25 +48,27 @@ def select_flip_cases(fits: pd.DataFrame) -> pd.DataFrame:
     ]
     
     design = flips[KEYS].drop_duplicates().copy()
-    design["_o"] = (design["algo_name"] != "ols").astype(int) \
-        + (design["algo_name"] != "glm").astype(int)
+    if BOOT_ALGOS:
+        design = design[design["algo_name"].isin(BOOT_ALGOS.split(","))]
+    cheap = design["algo_name"].isin(["ols", "glm", "glm_r"])
+    design["_o"] = (~cheap).astype(int)                 # cheap linear models first
     return design.sort_values("_o").drop(columns="_o").reset_index(drop=True)
 
 
 def main() -> None:
     acs = pd.read_parquet(here() / "census" / "temp" / "acs16_workforce.parquet")
     acs = acs.drop(columns=["naics_3"])
-    fits = pd.read_parquet(here() / "census" / "temp" / "nonlinear_fits.parquet")
+    fits = pd.read_parquet(here() / "census" / "temp" / f"nonlinear_fits{OUT_SUFFIX}.parquet")
 
     design = select_flip_cases(fits)
     print(f"{len(design)} flip cells to bootstrap (B={B}).")
 
-    boots_dir = here() / "census" / "temp" / "nonlinear_boots"
+    boots_dir = here() / "census" / "temp" / f"nonlinear_boots{OUT_SUFFIX}"
     boots_dir.mkdir(parents=True, exist_ok=True)
 
     # Resume: skip cells whose chunk file already exists.
     for i, cell in enumerate(design.itertuples(index=False), start=1):
-        chunk_path = boots_dir / f"{i}.parquet"
+        chunk_path = boots_dir / f"{cell_slug(cell)}.parquet"
         if chunk_path.exists():
             continue
         sub = acs[acs[cell.subset_name].astype(str) == cell.subset_value]
@@ -67,9 +83,9 @@ def main() -> None:
               f"{cell.pop_name} {cell.y_name} {cell.algo_name} -> {chunk_path.name}")
 
     # Combine all chunks.
-    chunks = sorted(boots_dir.glob("*.parquet"), key=lambda p: int(p.stem))
+    chunks = sorted(boots_dir.glob("*.parquet"))
     boots = pd.concat([pd.read_parquet(p) for p in chunks], ignore_index=True)
-    out_path = here() / "census" / "temp" / "nonlinear_boots.parquet"
+    out_path = here() / "census" / "temp" / f"nonlinear_boots{OUT_SUFFIX}.parquet"
     boots.to_parquet(out_path, index=False)
     print(f"Saved {len(boots):,} bootstrap rows -> {out_path}")
 

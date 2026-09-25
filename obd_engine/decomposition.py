@@ -35,8 +35,14 @@ _NAN_ROW = {
 }
 
 
-def decompose_mean(prepped: PreparedData, algo_name: str) -> dict:
-    """Run the decomposition on an already-prepared subset."""
+def decompose_mean(prepped: PreparedData, algo_name: str | None = None,
+                   builder=None) -> dict:
+    """Run the decomposition on an already-prepared subset.
+
+    ``algo_name`` selects a registered model; alternatively pass ``builder``, a zero-argument
+    callable returning an unfitted model (used by the complexity sweeps to vary one
+    hyperparameter while keeping everything else at the paper's values).
+    """
     pop = np.asarray(prepped.pop)
     y = np.asarray(prepped.y, dtype=float)
     X = prepped.features
@@ -46,7 +52,8 @@ def decompose_mean(prepped: PreparedData, algo_name: str) -> dict:
     if len(idx0) == 0 or len(idx1) == 0:
         return dict(_NAN_ROW)
 
-    builder = get_builder(algo_name, outcome_type(y))
+    if builder is None:
+        builder = get_builder(algo_name, outcome_type(y))
 
     X0, y0 = X.iloc[idx0], y[idx0]
     X1, y1 = X.iloc[idx1], y[idx1]

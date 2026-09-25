@@ -21,10 +21,14 @@ from .builders import (
     OLSModel,
     build_ols,
     build_logistic,
+    build_logistic_unpenalized,
+    aliased_free_columns,
     build_nn_clf,
     build_nn_reg,
     build_xgb_clf,
     build_xgb_reg,
+    build_tabpfn_clf,
+    build_tabpfn_reg,
 )
 from .decomposition import decompose_mean, decompose_from_data
 from .bootstrap import resample, bootstrap_decomposition
@@ -33,8 +37,8 @@ from .inference import pval, stars
 __all__ = [
     "PreparedData", "prepare_features", "CATEGORICAL_COLS",
     "outcome_type", "get_builder", "predict_mean", "OLSModel",
-    "build_ols", "build_logistic", "build_nn_clf", "build_nn_reg",
-    "build_xgb_clf", "build_xgb_reg",
+    "build_ols", "build_logistic", "build_logistic_unpenalized", "aliased_free_columns", "build_nn_clf", "build_nn_reg",
+    "build_xgb_clf", "build_xgb_reg", "build_tabpfn_clf", "build_tabpfn_reg",
     "decompose_mean", "decompose_from_data",
     "resample", "bootstrap_decomposition",
     "pval", "stars",

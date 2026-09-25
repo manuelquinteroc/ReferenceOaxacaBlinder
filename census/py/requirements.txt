@@ -9,3 +9,5 @@ xgboost==2.1.*
 joblib==1.4.*
 pyarrow>=14
 pyprojroot>=0.3
+# Optional, only for algo 'tabpfn' (GPU recommended); same code version as the ICU run:
+# tabpfn==7.1.*

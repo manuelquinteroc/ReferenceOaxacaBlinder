@@ -9,6 +9,7 @@ Run from the repo root:  python census/py/03_count_flips.py
 
 from __future__ import annotations
 
+import os
 import sys
 
 import numpy as np
@@ -18,6 +19,7 @@ from pyprojroot.here import here
 sys.path.insert(0, str(here()))
 from obd_engine import pval  # noqa: E402
 
+OUT_SUFFIX = os.environ.get("OBD_OUT_SUFFIX", "")
 GROUP_KEYS = ["subset_name", "subset_value", "pop_name", "algo_name", "y_name"]
 STAT_COLS = ["explained_0", "explained_1", "unexplained_0", "unexplained_1"]
 
@@ -33,10 +35,15 @@ def bootstrap_se(boots: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    fits = pd.read_parquet(here() / "census" / "temp" / "nonlinear_fits.parquet")
-    boots = pd.read_parquet(here() / "census" / "temp" / "nonlinear_boots.parquet")
-
-    boot_se = bootstrap_se(boots)
+    fits = pd.read_parquet(here() / "census" / "temp" / f"nonlinear_fits{OUT_SUFFIX}.parquet")
+    boots_path = here() / "census" / "temp" / f"nonlinear_boots{OUT_SUFFIX}.parquet"
+    if boots_path.exists():
+        boot_se = bootstrap_se(pd.read_parquet(boots_path))
+    else:
+        # No bootstrap yet (or none for these algos): SEs are missing, p-values NaN, and
+        # the reject_* columns below count 0 -- n_with_se makes that visible.
+        print(f"NOTE: {boots_path.name} not found; reporting point-estimate flips only.")
+        boot_se = pd.DataFrame(columns=GROUP_KEYS + ["stat_name", "stat_se"])
 
     # Point estimates, same size/magnitude filter as 02 (R lines 36-38).
     flips = fits[(fits["n_0"] > 50) & (fits["n_1"] > 50)
@@ -57,7 +64,8 @@ def main() -> None:
     by_comp = GROUP_KEYS[:-1] + ["y_name", "component"]  # subset/value/pop/algo/y/component
     flips_components = (long.groupby(GROUP_KEYS + ["component"], as_index=False)
                             .agg(is_flip=("stat_value", lambda s: float(np.prod(s)) < 0),
-                                 min_p_value=("p_value", "min")))
+                                 min_p_value=("p_value", "min"),
+                                 has_se=("stat_se", lambda s: bool(s.notna().all()))))
     flips_components["reject_10"] = flips_components["is_flip"] & (flips_components["min_p_value"] < 0.10)
     flips_components["reject_05"] = flips_components["is_flip"] & (flips_components["min_p_value"] < 0.05)
     flips_components["reject_01"] = flips_components["is_flip"] & (flips_components["min_p_value"] < 0.01)
@@ -69,7 +77,8 @@ def main() -> None:
              is_flip=("is_flip", "sum"),
              reject_10=("reject_10", "sum"),
              reject_05=("reject_05", "sum"),
-             reject_01=("reject_01", "sum"))
+             reject_01=("reject_01", "sum"),
+             n_with_se=("has_se", "sum"))
     )
 
     # "Either component" aggregate per cell, then counts (R lines 72-89).
@@ -78,7 +87,8 @@ def main() -> None:
         .agg(is_flip=("is_flip", "any"),
              reject_10=("reject_10", "any"),
              reject_05=("reject_05", "any"),
-             reject_01=("reject_01", "any"))
+             reject_01=("reject_01", "any"),
+             has_se=("has_se", "all"))
     )
     flip_counts_total = (
         flips_total.groupby(["y_name", "algo_name"], as_index=False)
@@ -86,16 +96,17 @@ def main() -> None:
              is_flip=("is_flip", "sum"),
              reject_10=("reject_10", "sum"),
              reject_05=("reject_05", "sum"),
-             reject_01=("reject_01", "sum"))
+             reject_01=("reject_01", "sum"),
+             n_with_se=("has_se", "sum"))
     )
     flip_counts_total["component"] = "either"
 
     flip_counts = pd.concat([flip_counts_component, flip_counts_total], ignore_index=True)
     # Order columns as in R output.
     flip_counts = flip_counts[["y_name", "algo_name", "component", "n_fit",
-                               "is_flip", "reject_10", "reject_05", "reject_01"]]
+                               "is_flip", "reject_10", "reject_05", "reject_01", "n_with_se"]]
 
-    out_path = here() / "census" / "out_py" / "flip_counts.csv"
+    out_path = here() / "census" / "out_py" / f"flip_counts{OUT_SUFFIX}.csv"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     flip_counts.to_csv(out_path, index=False)
     print(f"Saved flip counts -> {out_path}")

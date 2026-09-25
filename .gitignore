@@ -221,3 +221,9 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 .Rproj.user
+
+# python census pipeline: keep smoke-test outputs out of git (real outputs are committed)
+census/out_py/*_test.csv
+
+# internal progress reports (not part of the replication package)
+reports/

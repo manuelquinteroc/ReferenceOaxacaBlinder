@@ -12,6 +12,8 @@ Run from the repo root:  python census/py/01_fit_decomposition.py
 
 from __future__ import annotations
 
+import json
+import os
 import sys
 
 import pandas as pd
@@ -21,14 +23,21 @@ from pyprojroot.here import here
 sys.path.insert(0, str(here()))
 from obd_engine import decompose_from_data
 
-SUBSET_COLS = ["st", "naics_2"]
-POP_NAMES = ["sex_female", "race_bw", "immigrant"]
-ALGOS_BY_OUTCOME = {
-    "pincp": ["ols", "gbt"],
-    "hicov": ["ols", "glm"],
-}
+# Design grid. Each setting can be overridden from the environment so this one script
+# serves quick tests and the TabPFN run on the cluster without editing code, e.g.
+#   OBD_SUBSET_COLS=st OBD_POP_NAMES=sex_female OBD_ALGOS='{"pincp": ["gbt"]}' \
+#       OBD_OUT_SUFFIX=_test python census/py/01_fit_decomposition.py
+SUBSET_COLS = os.environ.get("OBD_SUBSET_COLS", "st,naics_2").split(",")
+POP_NAMES = os.environ.get("OBD_POP_NAMES", "sex_female,race_bw,immigrant").split(",")
+ALGOS_BY_OUTCOME = json.loads(os.environ.get("OBD_ALGOS", json.dumps({
+    "pincp": ["ols", "gbt", "net"],          # continuous outcome: no logistic
+    "hicov": ["ols", "glm", "glm_r", "gbt", "net"],
+})))
+# "tabpfn" is registered in obd_engine but left out of the default grid (needs a GPU):
+#   OBD_ALGOS='{"pincp": ["tabpfn"], "hicov": ["tabpfn"]}' OBD_OUT_SUFFIX=_tabpfn ...
 
-N_JOBS = 8
+N_JOBS = int(os.environ.get("OBD_N_JOBS", 8))
+OUT_SUFFIX = os.environ.get("OBD_OUT_SUFFIX", "")   # e.g. "_test", "_tabpfn"
 
 def build_subsets(acs: pd.DataFrame) -> pd.DataFrame:
     """Distinct (subset_name, subset_value) pairs over st and naics_2, as strings."""
@@ -76,7 +85,7 @@ def main() -> None:
     )
 
     fits = pd.DataFrame([row for chunk in results for row in chunk])
-    out_path = here() / "census" / "temp" / "nonlinear_fits.parquet"
+    out_path = here() / "census" / "temp" / f"nonlinear_fits{OUT_SUFFIX}.parquet"
     fits.to_parquet(out_path, index=False)
     print(f"Saved {len(fits):,} fit rows -> {out_path}")
 

@@ -1,0 +1,69 @@
+family,knob,y_name,total_flips,explained_flips,unexplained_flips,n_errors
+XGBoost depth,depth 1,hicov,47.0,35.0,13.0,0
+XGBoost depth,depth 2,hicov,48.0,37.0,12.0,0
+XGBoost depth,depth 3,hicov,54.0,45.0,10.0,0
+XGBoost depth,depth 4,hicov,56.0,46.0,11.0,0
+XGBoost depth,depth 5,hicov,52.0,45.0,9.0,0
+XGBoost depth,depth 6,hicov,53.0,44.0,11.0,0
+XGBoost depth,depth 7,hicov,54.0,46.0,9.0,0
+XGBoost depth,depth 8,hicov,57.0,45.0,13.0,0
+XGBoost depth,depth 9,hicov,58.0,45.0,15.0,0
+XGBoost depth,depth 10,hicov,60.0,47.0,15.0,0
+XGBoost depth,depth 1,pincp,31.0,29.0,4.0,0
+XGBoost depth,depth 2,pincp,40.0,37.0,6.0,0
+XGBoost depth,depth 3,pincp,34.0,31.0,5.0,0
+XGBoost depth,depth 4,pincp,32.0,26.0,7.0,0
+XGBoost depth,depth 5,pincp,30.0,25.0,6.0,0
+XGBoost depth,depth 6,pincp,28.0,23.0,6.0,0
+XGBoost depth,depth 7,pincp,28.0,25.0,6.0,0
+XGBoost depth,depth 8,pincp,26.0,22.0,7.0,0
+XGBoost depth,depth 9,pincp,24.0,20.0,7.0,0
+XGBoost depth,depth 10,pincp,24.0,20.0,7.0,0
+XGBoost trees,10 trees,hicov,22.0,20.0,2.0,0
+XGBoost trees,25 trees,hicov,21.0,16.0,5.0,0
+XGBoost trees,50 trees,hicov,34.0,24.0,11.0,0
+XGBoost trees,100 trees,hicov,51.0,37.0,15.0,0
+XGBoost trees,250 trees,hicov,54.0,45.0,10.0,0
+XGBoost trees,500 trees,hicov,57.0,45.0,13.0,0
+XGBoost trees,1000 trees,hicov,59.0,49.0,12.0,0
+XGBoost trees,2000 trees,hicov,58.0,46.0,14.0,0
+XGBoost trees,4000 trees,hicov,54.0,43.0,15.0,0
+XGBoost trees,10000 trees,hicov,65.0,51.0,18.0,0
+XGBoost trees,10 trees,pincp,40.0,40.0,1.0,0
+XGBoost trees,25 trees,pincp,38.0,35.0,4.0,0
+XGBoost trees,50 trees,pincp,41.0,38.0,5.0,0
+XGBoost trees,100 trees,pincp,37.0,34.0,6.0,0
+XGBoost trees,250 trees,pincp,34.0,31.0,5.0,0
+XGBoost trees,500 trees,pincp,24.0,21.0,5.0,0
+XGBoost trees,1000 trees,pincp,27.0,22.0,7.0,0
+XGBoost trees,2000 trees,pincp,26.0,21.0,9.0,0
+XGBoost trees,4000 trees,pincp,25.0,22.0,8.0,0
+XGBoost trees,10000 trees,pincp,26.0,21.0,8.0,0
+"NN width, depth 3 (mean of seeds)",w=8 (804 params),hicov,59.0,40.7,22.7,0
+"NN width, depth 3 (mean of seeds)",w=16 (1862 params),hicov,60.0,43.3,21.0,0
+"NN width, depth 3 (mean of seeds)",w=32 (4748 params),hicov,61.3,48.3,18.3,0
+"NN width, depth 3 (mean of seeds)",w=64 (13591 params),hicov,66.0,51.7,22.0,0
+"NN width, depth 3 (mean of seeds)",w=128 (43564 params),hicov,72.3,57.0,24.0,0
+"NN width, depth 3 (mean of seeds)",w=256 (152664 params),hicov,72.7,56.3,23.3,0
+"NN width, depth 3 (mean of seeds)",w=8 (798 params),pincp,66.7,62.7,9.3,0
+"NN width, depth 3 (mean of seeds)",w=16 (1852 params),pincp,88.0,83.0,10.3,0
+"NN width, depth 3 (mean of seeds)",w=32 (4727 params),pincp,87.7,82.3,14.0,0
+"NN width, depth 3 (mean of seeds)",w=64 (13549 params),pincp,91.7,87.3,12.7,0
+"NN width, depth 3 (mean of seeds)",w=128 (43480 params),pincp,91.0,83.3,22.3,0
+"NN width, depth 3 (mean of seeds)",w=256 (152496 params),pincp,97.3,88.3,22.7,0
+"NN depth, width 32 (mean of seeds)",d=1 (2636 params),hicov,59.0,45.0,21.7,0
+"NN depth, width 32 (mean of seeds)",d=2 (3692 params),hicov,62.0,47.3,21.0,0
+"NN depth, width 32 (mean of seeds)",d=3 (4748 params),hicov,61.3,48.3,18.3,0
+"NN depth, width 32 (mean of seeds)",d=4 (5804 params),hicov,57.7,46.3,17.7,0
+"NN depth, width 32 (mean of seeds)",d=6 (7916 params),hicov,51.0,42.7,12.7,0
+"NN depth, width 32 (mean of seeds)",d=8 (10028 params),hicov,59.3,46.3,19.3,0
+"NN depth, width 32 (mean of seeds)",d=12 (14252 params),hicov,60.0,44.3,24.3,0
+"NN depth, width 32 (mean of seeds)",d=16 (18476 params),hicov,58.0,44.7,20.0,0
+"NN depth, width 32 (mean of seeds)",d=1 (2615 params),pincp,96.3,93.0,10.7,0
+"NN depth, width 32 (mean of seeds)",d=2 (3671 params),pincp,89.3,84.7,11.0,0
+"NN depth, width 32 (mean of seeds)",d=3 (4727 params),pincp,87.7,82.3,14.0,0
+"NN depth, width 32 (mean of seeds)",d=4 (5783 params),pincp,88.3,81.3,16.0,0
+"NN depth, width 32 (mean of seeds)",d=6 (7895 params),pincp,80.7,73.3,16.3,0
+"NN depth, width 32 (mean of seeds)",d=8 (10007 params),pincp,73.3,66.3,14.0,0
+"NN depth, width 32 (mean of seeds)",d=12 (14231 params),pincp,60.7,53.3,15.7,0
+"NN depth, width 32 (mean of seeds)",d=16 (18455 params),pincp,43.0,37.3,10.7,0

@@ -1,0 +1,49 @@
+family,knob,total_flips,explained_flips,unexplained_flips,n_errors
+XGBoost depth,depth 1,26.0,8.0,21.0,0
+XGBoost depth,depth 2,31.0,15.0,24.0,0
+XGBoost depth,depth 3,62.0,33.0,47.0,0
+XGBoost depth,depth 4,94.0,63.0,73.0,0
+XGBoost depth,depth 5,128.0,104.0,113.0,0
+XGBoost depth,depth 6,137.0,130.0,126.0,0
+XGBoost depth,depth 7,137.0,134.0,132.0,0
+XGBoost depth,depth 8,137.0,135.0,133.0,0
+XGBoost depth,depth 9,138.0,136.0,134.0,0
+XGBoost depth,depth 10,138.0,137.0,133.0,0
+XGBoost trees,10 trees,27.0,14.0,16.0,0
+XGBoost trees,25 trees,23.0,9.0,17.0,0
+XGBoost trees,50 trees,26.0,10.0,19.0,0
+XGBoost trees,100 trees,31.0,12.0,22.0,0
+XGBoost trees,250 trees,62.0,33.0,47.0,0
+XGBoost trees,500 trees,91.0,61.0,72.0,0
+XGBoost trees,1000 trees,122.0,98.0,104.0,0
+XGBoost trees,2000 trees,133.0,126.0,123.0,0
+XGBoost trees,4000 trees,135.0,131.0,125.0,0
+XGBoost trees,10000 trees,137.0,134.0,127.0,0
+NN mixed (seed 0),2 (17 params),65.0,44.0,34.0,0
+NN mixed (seed 0),4 (33 params),104.0,71.0,75.0,0
+NN mixed (seed 0),8 (65 params),29.0,12.0,20.0,0
+NN mixed (seed 0),8-4 (97 params),42.0,22.0,31.0,0
+NN mixed (seed 0),16 (129 params),61.0,30.0,41.0,0
+NN mixed (seed 0),16-8 (257 params),44.0,21.0,39.0,0
+NN mixed (seed 0),32 (257 params),37.0,18.0,27.0,0
+NN mixed (seed 0),32-16 (769 params),62.0,42.0,49.0,0
+NN mixed (seed 0),32-16-8-4 (929 params),61.0,45.0,52.0,0
+NN mixed (seed 0),64-32 (2561 params),66.0,43.0,59.0,0
+NN mixed (seed 0),64-32-16-8 (3201 params),107.0,105.0,102.0,0
+NN mixed (seed 0),128-64-32 (11265 params),82.0,61.0,70.0,0
+"NN width, depth 3 (mean of 3 seeds)",w=8 (209 params),45.7,23.0,34.7,0
+"NN width, depth 3 (mean of 3 seeds)",w=16 (673 params),54.7,37.0,41.0,0
+"NN width, depth 3 (mean of 3 seeds)",w=32 (2369 params),69.7,50.0,57.3,0
+"NN width, depth 3 (mean of 3 seeds)",w=64 (8833 params),89.0,68.7,82.7,0
+"NN width, depth 3 (mean of 3 seeds)",w=128 (34049 params),96.7,76.7,88.3,0
+"NN width, depth 3 (mean of 3 seeds)",w=256 (133633 params),94.3,74.7,84.0,0
+"NN width, depth 3 (mean of 3 seeds)",w=512 (529409 params),85.0,67.3,74.7,0
+"NN width, depth 3 (mean of 3 seeds)",w=768 (1187329 params),86.3,70.7,74.3,0
+"NN depth, width 32 (mean of 3 seeds)",d=1 (257 params),32.7,12.3,26.0,0
+"NN depth, width 32 (mean of 3 seeds)",d=2 (1313 params),57.0,33.7,45.7,0
+"NN depth, width 32 (mean of 3 seeds)",d=3 (2369 params),69.7,50.0,57.3,0
+"NN depth, width 32 (mean of 3 seeds)",d=4 (3425 params),75.7,55.3,63.7,0
+"NN depth, width 32 (mean of 3 seeds)",d=6 (5537 params),70.7,54.0,59.3,0
+"NN depth, width 32 (mean of 3 seeds)",d=8 (7649 params),69.0,52.3,52.3,0
+"NN depth, width 32 (mean of 3 seeds)",d=12 (11873 params),69.7,53.0,59.7,0
+"NN depth, width 32 (mean of 3 seeds)",d=16 (16097 params),65.3,51.0,52.7,0

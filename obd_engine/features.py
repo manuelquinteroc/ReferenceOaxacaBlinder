@@ -14,6 +14,7 @@ The two transformations that matter for fidelity with the R code are:
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 import numpy as np
@@ -23,6 +24,13 @@ import pandas as pd
 # entirely: it is only a subset identifier (R drops it alongside pop/outcome).
 CATEGORICAL_COLS = ["st", "indp_2"]
 EXCLUDE_FROM_FEATURES = ["naics_2"]
+
+# The R pipeline behind the paper's Tables 8-9 (census/00_load-acs-16.R) never had these
+# four covariates; the Python loader adds them. They are excluded from the design matrix by
+# default so the tables reproduce; set OBD_EXTRA_COVARIATES=1 to include them.
+EXTRA_COVARIATES = ["disability", "self_employed", "govt_employee", "veteran"]
+if os.environ.get("OBD_EXTRA_COVARIATES", "0") != "1":
+    EXCLUDE_FROM_FEATURES = EXCLUDE_FROM_FEATURES + EXTRA_COVARIATES
 
 
 @dataclass

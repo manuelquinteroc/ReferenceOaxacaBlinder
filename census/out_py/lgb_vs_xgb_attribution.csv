@@ -1,0 +1,9 @@
+algo,y_name,n_fit,either,explained,unexplained,nan_cells,seconds
+lgb_r,hicov,183,57,45,12,0,30
+lgb_r,pincp,217,25,20,5,0,53
+lgb_lr005,hicov,183,56,41,15,0,85
+lgb_lr005,pincp,217,27,25,3,0,178
+lgb_fixed,hicov,183,57,48,12,0,57
+lgb_fixed,pincp,217,29,23,7,0,62
+gbt,hicov,183,54,45,10,0,104
+gbt,pincp,217,34,31,5,0,88
