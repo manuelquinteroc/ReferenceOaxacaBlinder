@@ -14,8 +14,10 @@
 #   # .ckpt files over and set OBD_TABPFN_CLF_PATH / OBD_TABPFN_REG_PATH instead.
 #   # Data: census/raw/ss16pusa.csv + ss16pusb.csv (see README), then `python census/py/00_load_acs.py`.
 #
-# Usage:  bash census/py/run_tabpfn_cluster.sh            # full grid, point estimates only
-#         OBD_B=200 bash census/py/run_tabpfn_cluster.sh  # ...plus a B=200 bootstrap of the flip cells
+# Usage:  bash census/py/run_tabpfn_cluster.sh                 # fits + B = 1000 bootstrap + flip counts (the paper)
+#         OBD_B=200 bash census/py/run_tabpfn_cluster.sh       # smaller bootstrap
+#         OBD_SKIP_FIT=1 bash census/py/run_tabpfn_cluster.sh  # fits already in census/temp/nonlinear_fits_tabpfn.parquet:
+#                                                            # run only the bootstrap and the flip counts
 set -euo pipefail
 cd "$(dirname "$0")/../.."                          # repo root
 
@@ -28,9 +30,10 @@ export OBD_TABPFN_DEVICE="${OBD_TABPFN_DEVICE:-auto}"       # auto = cuda if pre
 export OBD_TABPFN_MAX_ROWS="${OBD_TABPFN_MAX_ROWS:-10000}"  # training rows per group (predicts on all)
 export OBD_N_JOBS="${OBD_N_JOBS:-1}"                         # 1 per GPU; raise only on CPU-only nodes
 export OBD_INNER_JOBS="${OBD_INNER_JOBS:-1}"
+export OBD_B="${OBD_B:-1000}"                               # paper: 1000
 
-python census/py/01_fit_decomposition.py
-if [[ -n "${OBD_B:-}" ]]; then
-  python census/py/02_bootstrap_flips.py                     # resumable; rerun to continue
+if [[ -z "${OBD_SKIP_FIT:-}" ]]; then
+  python census/py/01_fit_decomposition.py                   # point estimates on every cell
 fi
-python census/py/03_count_flips.py                           # works with or without bootstraps
+python census/py/02_bootstrap_flips.py                       # bootstrap of the flip cells; resumable, rerun to continue
+python census/py/03_count_flips.py                           # -> census/out_py/flip_counts_tabpfn.csv
