@@ -46,7 +46,7 @@ def main() -> None:
         boot_se = pd.DataFrame(columns=GROUP_KEYS + ["stat_name", "stat_se"])
 
     # Point estimates, same size/magnitude filter as 02 (R lines 36-38).
-    flips = fits[(fits["n_0"] > 50) & (fits["n_1"] > 50)
+    flips = fits[(fits["n_0"] >= 50) & (fits["n_1"] >= 50)
                  & (fits["delta_y"].abs() > 0.01)].copy()
 
     # Long over the four explained/unexplained columns; attach SEs; split into

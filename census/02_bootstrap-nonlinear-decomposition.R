@@ -31,7 +31,7 @@ fits_obs = read_fst(here('census', 'temp', 'nonlinear_fits.fst')) |> as_tibble()
 # Configure ---------------------------------------------------------------
 # Same size/magnitude filter as 02 (linear version); applied to nonlinear fits
 fits_sized = fits_obs |>
-  filter(n_0 > 50, n_1 > 50, abs(delta_y) > 0.01)
+  filter(n_0 >= 50, n_1 >= 50, abs(delta_y) > 0.01)
 
 # Same sign-flip criterion as 02
 flips_sized = fits_sized |>

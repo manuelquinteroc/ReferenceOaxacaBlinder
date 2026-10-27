@@ -35,7 +35,7 @@ boot_se = boots |>
 # Append SEs  -------------------------------------------------------------
 flips_components = fits |>
   # Drop cells too small for reliable inference or with negligible raw gaps
-  filter(n_0 > 50, n_1 > 50, abs(delta_y) > 0.01) |>
+  filter(n_0 >= 50, n_1 >= 50, abs(delta_y) > 0.01) |>
   mutate(fit_id = row_number()) |>
   pivot_longer(cols = c(contains('explained')),
                names_to  = 'stat_name',
